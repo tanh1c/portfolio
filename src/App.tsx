@@ -1,4 +1,4 @@
-import { Search, Play, Plus, Server, Code, GraduationCap, Github, Linkedin, Mail, Zap, Monitor, Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Play, Plus, Server, Code, GraduationCap, Github, Linkedin, Mail, Zap, Monitor, Eye, EyeOff, ChevronLeft, ChevronRight, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 
@@ -237,6 +237,7 @@ export default function App() {
   const [activeBg, setActiveBg] = useState('/bg2.mp4');
   const [statusIndex, setStatusIndex] = useState(0);
   const [showCrewPopup, setShowCrewPopup] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const [isRawVideo, setIsRawVideo] = useState(false);
   const [activeSection, setActiveSection] = useState('orbit');
   const [isLoading, setIsLoading] = useState(true);
@@ -499,7 +500,7 @@ export default function App() {
                 transition={{ delay: 0.2 }}
                 className="space-y-1"
               >
-                <div className="text-5xl md:text-7xl font-display font-black text-neon">2026</div>
+                <div className="text-5xl md:text-7xl font-display font-black text-neon">2027</div>
                 <div className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-50">Graduation Orbit</div>
               </motion.div>
               <motion.div
@@ -509,7 +510,7 @@ export default function App() {
                 transition={{ delay: 0.4 }}
                 className="space-y-1"
               >
-                <div className="text-5xl md:text-7xl font-display font-black text-neon">50+</div>
+                <div className="text-5xl md:text-7xl font-display font-black text-neon">36+</div>
                 <div className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-50">Explored Repos</div>
               </motion.div>
             </div>
@@ -522,12 +523,12 @@ export default function App() {
                     <div key={i} className="w-10 h-10 rounded-full border-2 border-[#050a05] overflow-hidden grayscale hover:grayscale-0 hover:scale-110 transition-all cursor-crosshair bg-green-500/10 relative z-10">
                       <img
                         src={imgSrc}
-                        alt={`Crew Member ${i+1}`}
+                        alt={`Crew Member ${i + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
-                  <button 
+                  <button
                     onClick={() => setShowCrewPopup(prev => !prev)}
                     className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center border-2 border-[#050a05] hover:bg-green-400 transition-colors shadow-[0_0_15px_rgba(34,197,94,0.4)] relative z-20"
                   >
@@ -573,37 +574,37 @@ export default function App() {
           {/* Left panel: Info */}
           <div className="lg:w-1/2 flex flex-col items-center lg:items-start gap-10">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 w-full">
-              <div 
-                className="relative group cursor-pointer" 
+              <div
+                className="relative group cursor-pointer"
                 onClick={() => setStatusIndex((prev) => (prev + 1) % AVATAR_STATUSES.length)}
                 title="Click to cycle status"
               >
                 <div className="w-56 h-56 md:w-64 md:h-64 flex-shrink-0 rounded-full border-4 border-green-500 overflow-hidden relative bg-green-900/10">
                   <AnimatePresence mode="wait">
-                    <motion.img 
+                    <motion.img
                       key={statusIndex}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 1.1 }}
                       transition={{ duration: 0.3 }}
-                      src={AVATAR_STATUSES[statusIndex].image} 
-                      alt="Chu Nguyễn Tuấn Anh Status" 
-                      className="w-full h-full object-cover absolute inset-0" 
+                      src={AVATAR_STATUSES[statusIndex].image}
+                      alt="Chu Nguyễn Tuấn Anh Status"
+                      className="w-full h-full object-cover absolute inset-0"
                     />
                   </AnimatePresence>
                 </div>
                 {/* Embedded iOS Emoji Status Badge */}
                 <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 bg-[#050a05] border-4 border-green-500 rounded-full p-1.5 md:p-2 flex items-center justify-center transform hover:scale-110 transition-transform z-20">
                   <AnimatePresence mode="wait">
-                    <motion.img 
+                    <motion.img
                       key={statusIndex + '-icon'}
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0 }}
                       transition={{ duration: 0.2 }}
-                      src={AVATAR_STATUSES[statusIndex].iconUrl} 
-                      alt="status emoji" 
-                      className="w-5 h-5 md:w-6 md:h-6 object-contain" 
+                      src={AVATAR_STATUSES[statusIndex].iconUrl}
+                      alt="status emoji"
+                      className="w-5 h-5 md:w-6 md:h-6 object-contain"
                     />
                   </AnimatePresence>
                 </div>
@@ -624,13 +625,36 @@ export default function App() {
 
             {/* Grid stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-8 w-full bg-white/5 p-8 border border-white/10 rounded-sm">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <span className="text-[11px] font-black tracking-widest uppercase text-green-500/50">University Affiliation</span>
-                <span className="text-base font-medium opacity-90 leading-tight">Ho Chi Minh City University of Technology (HCMUT)</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-white rounded-full p-1.5 flex-shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
+                    <img src="/HCMUT.svg" alt="HCMUT Logo" className="w-full h-full object-contain" />
+                  </div>
+                  <span className="text-base font-medium opacity-90 leading-tight pt-1.5">Ho Chi Minh City University of Technology (HCMUT)</span>
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3">
                 <span className="text-[11px] font-black tracking-widest uppercase text-green-500/50">Email Frequency</span>
-                <a href="mailto:chunguyentuananh11b6@gmail.com" className="text-base font-medium opacity-90 hover:text-green-400 transition-colors break-all">chunguyentuananh11b6@gmail.com</a>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-white rounded-full p-2 flex-shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail Logo" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="flex items-start gap-2 min-w-0 pt-1.5">
+                    <a href="mailto:chunguyentuananh11b6@gmail.com" className="text-base font-medium opacity-90 hover:text-green-400 transition-colors break-all leading-tight">chunguyentuananh11b6@gmail.com</a>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText("chunguyentuananh11b6@gmail.com");
+                        setIsCopied(true);
+                        setTimeout(() => setIsCopied(false), 2000);
+                      }}
+                      className="p-1.5 bg-green-500/10 hover:bg-green-500/30 text-green-500 rounded-sm transition-colors border border-green-500/20 cursor-pointer flex-shrink-0"
+                      title="Copy email address"
+                    >
+                      {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] font-black tracking-widest uppercase text-green-500/50">Direct Comm</span>
