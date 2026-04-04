@@ -252,21 +252,58 @@ export default function App() {
   const handlePrevMission = () => setActiveMissionIndex((prev) => (prev - 1 + PROJECTS_DATA.length) % PROJECTS_DATA.length);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setLoadingProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setIsLoading(false), 800);
-          return 100;
-        }
-        const next = prev + Math.random() * 15;
-        return next > 100 ? 100 : next;
-      });
-    }, 150);
+    // Authentic Heavy Asset Preloader
+    const criticalAssets = [
+      { type: 'video', src: '/bg2.mp4' },
+      { type: 'video', src: '/bg1.mp4' },
+      { type: 'image', src: '/memoji.png' },
+      { type: 'image', src: '/working.png' },
+      { type: 'image', src: '/sleeping.png' },
+      { type: 'image', src: '/HCMUT.svg' },
+      { type: 'image', src: '/crew1.png' },
+      { type: 'image', src: '/crew2.png' },
+      { type: 'image', src: '/crew3.png' }
+    ];
 
-    return () => clearInterval(timer);
+    let loadedAssetsCount = 0;
+    
+    const handleAssetLoad = () => {
+      loadedAssetsCount++;
+      const currentProgress = (loadedAssetsCount / criticalAssets.length) * 100;
+      setLoadingProgress(currentProgress);
+      
+      if (loadedAssetsCount === criticalAssets.length) {
+        setTimeout(() => setIsLoading(false), 800);
+      }
+    };
+
+    criticalAssets.forEach(asset => {
+      if (asset.type === 'image') {
+        const img = new Image();
+        img.onload = handleAssetLoad;
+        img.onerror = handleAssetLoad; // Prevent infinite loading if an asset 404s
+        img.src = asset.src;
+      } else if (asset.type === 'video') {
+        const vid = document.createElement('video');
+        vid.oncanplaythrough = handleAssetLoad;
+        vid.onerror = handleAssetLoad;
+        vid.src = asset.src;
+        vid.load();
+      }
+    });
+
+    // Failsafe: Force boot after 8 seconds if network is lagging
+    const failsafe = setTimeout(() => {
+      if (loadedAssetsCount < criticalAssets.length) {
+        setLoadingProgress(100);
+        setTimeout(() => setIsLoading(false), 800);
+      }
+    }, 8000);
+
+    return () => clearTimeout(failsafe);
   }, []);
 
+  // Section tracking observer
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -282,6 +319,27 @@ export default function App() {
     });
 
     return () => observer.disconnect();
+  }, []);
+
+  // Auto pause/play background video when Hero section leaves/enters viewport
+  useEffect(() => {
+    const heroEl = document.getElementById('orbit');
+    if (!heroEl) return;
+
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = heroEl.querySelector('video');
+        if (!video) return;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.05 });
+
+    videoObserver.observe(heroEl);
+    return () => videoObserver.disconnect();
   }, []);
 
   return (
