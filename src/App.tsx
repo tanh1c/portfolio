@@ -1,4 +1,4 @@
-import { Search, Play, Plus, Server, Code, GraduationCap, Github, Linkedin, Mail, Zap, Monitor, Eye, EyeOff, ChevronLeft, ChevronRight, Copy, Check } from 'lucide-react';
+import { Search, Play, Plus, Server, Code, GraduationCap, Github, Linkedin, Mail, Zap, Monitor, Eye, EyeOff, ChevronLeft, ChevronRight, Copy, Check, Cpu, BrainCircuit, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 
@@ -238,6 +238,7 @@ export default function App() {
   const [statusIndex, setStatusIndex] = useState(0);
   const [showCrewPopup, setShowCrewPopup] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [selectedCV, setSelectedCV] = useState<null | 'AI' | 'SE'>(null);
   const [isRawVideo, setIsRawVideo] = useState(false);
   const [activeSection, setActiveSection] = useState('orbit');
   const [isLoading, setIsLoading] = useState(true);
@@ -678,17 +679,139 @@ export default function App() {
             </a>
           </div>
 
-          {/* Right panel: PDF Viewer */}
-          <div className="lg:w-1/2 w-full h-[600px] lg:h-[800px] flex flex-col bg-[#050a05] border border-green-500/20 backdrop-blur-sm relative p-2 shadow-[0_0_30px_rgba(34,197,94,0.05)]">
-            <div className="flex justify-between items-center p-4 border-b border-white/10 mb-2">
+          {/* Right panel: PDF Viewer Vault */}
+          <div className="lg:w-1/2 w-full h-[600px] lg:h-[800px] flex flex-col bg-[#050a05] border border-green-500/20 backdrop-blur-sm relative p-2 shadow-[0_0_30px_rgba(34,197,94,0.05)] overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-white/10 mb-2 relative z-30 bg-[#050a05]">
               <div className="text-xs font-black tracking-widest text-green-500 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> DOSSIER_VIEWER.EXE
+                <div className={`w-2 h-2 rounded-full ${selectedCV ? 'bg-green-500 animate-pulse' : 'bg-green-500/30'}`} /> {selectedCV ? `TARGET_LOCKED: ${selectedCV}_MODULE` : 'DOSSIER_VIEWER.EXE'}
               </div>
-              <a href="/CV.pdf" target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold tracking-widest text-white/50 hover:text-white border-b border-transparent hover:border-white transition-colors uppercase">
-                Expand Object
-              </a>
+              {selectedCV && (
+                <div className="flex gap-4 items-center">
+                  <button onClick={() => setSelectedCV(null)} className="text-[10px] font-bold tracking-widest text-red-500/70 hover:text-red-400 border-b border-transparent hover:border-red-500/50 transition-colors uppercase mr-1">
+                    Eject Module
+                  </button>
+                  <a href={selectedCV === 'AI' ? '/CV_aboutAI.pdf' : '/CV_aboutSE.pdf'} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold tracking-widest text-white/50 hover:text-white border-b border-transparent hover:border-white transition-colors uppercase">
+                    Expand Object
+                  </a>
+                </div>
+              )}
             </div>
-            <iframe src="/CV.pdf" className="w-full flex-1 rounded-sm grayscale hover:grayscale-0 transition-all duration-700" title="Dossier CV" />
+
+            <div className="relative flex-1 w-full h-full overflow-hidden bg-black rounded-sm border border-white/5">
+              
+              {/* Iframe Background layer */}
+              {selectedCV && (
+                <motion.iframe 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.8 }}
+                  src={selectedCV === 'AI' ? '/CV_aboutAI.pdf' : '/CV_aboutSE.pdf'} 
+                  className="absolute inset-0 w-full h-full rounded-sm grayscale hover:grayscale-0 transition-opacity duration-700 z-0 bg-white" 
+                  title="Dossier CV" 
+                />
+              )}
+
+              {/* Left Vault Door */}
+              <motion.div 
+                animate={{ x: selectedCV ? "-100%" : "0%" }}
+                transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
+                className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-[#030603] to-[#0a110a] border-r-[3px] border-green-500/50 z-10 shadow-[inset_-20px_0_50px_rgba(0,0,0,0.9)] flex-shrink-0 flex flex-col items-end overflow-hidden"
+              >
+                {/* Industrial grid & stripes */}
+                <div className="absolute inset-0 opacity-[0.03] bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#fff_10px,#fff_20px)]" />
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-green-500/10 font-black text-7xl md:text-8xl -rotate-90 whitespace-nowrap font-display tracking-widest pointer-events-none">RESTRICTED</div>
+                
+                {/* Central locking gear - Left half */}
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[2px] w-8 md:w-16 h-32 md:h-48 bg-[#030603] border-y-2 border-l-2 border-green-500/50 rounded-l-xl shadow-[0_0_30px_rgba(34,197,94,0.1)] flex items-center justify-end pr-1 md:pr-2 z-20">
+                  <div className="w-1 h-20 md:h-28 bg-green-500/30 rounded-full" />
+                </div>
+                
+                <div className="w-full border-t border-green-500/10 mt-20" />
+                <div className="w-full border-b border-green-500/10 mb-20 mt-auto" />
+              </motion.div>
+
+              {/* Right Vault Door */}
+              <motion.div 
+                animate={{ x: selectedCV ? "100%" : "0%" }}
+                transition={{ duration: 0.8, ease: "easeInOut", delay: 0.2 }}
+                className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#030603] to-[#0a110a] border-l-[3px] border-green-500/50 z-10 shadow-[inset_20px_0_50px_rgba(0,0,0,0.9)] flex-shrink-0 flex flex-col items-start overflow-hidden"
+              >
+                {/* Industrial grid & stripes */}
+                <div className="absolute inset-0 opacity-[0.03] bg-[repeating-linear-gradient(-45deg,transparent,transparent_10px,#fff_10px,#fff_20px)]" />
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-green-500/10 font-black text-7xl md:text-8xl rotate-90 whitespace-nowrap font-display tracking-widest pointer-events-none">DOSSIER</div>
+                
+                {/* Central locking gear - Right half */}
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[2px] w-8 md:w-16 h-32 md:h-48 bg-[#030603] border-y-2 border-r-2 border-green-500/50 rounded-r-xl shadow-[0_0_30px_rgba(34,197,94,0.1)] flex items-center justify-start pl-1 md:pl-2 z-20">
+                  <div className="w-1 h-20 md:h-28 bg-green-500/30 rounded-full" />
+                </div>
+
+                <div className="w-full border-t border-green-500/10 mt-20" />
+                <div className="w-full border-b border-green-500/10 mb-20 mt-auto" />
+              </motion.div>
+
+              {/* Mission Trajectory Selection Menu - Floating above closed bay doors */}
+              <AnimatePresence>
+                {!selectedCV && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+                    transition={{ duration: 0.4 }}
+                    className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-black/50 backdrop-blur-sm"
+                  >
+                    {/* Glowing back-orb */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-green-500/5 rounded-full blur-[60px] pointer-events-none" />
+                    
+                    <div className="text-center mb-10 w-full relative">
+                      <div className="flex items-center justify-center gap-4 mb-5">
+                        <div className="w-12 h-px bg-green-500/40" />
+                        <Lock className="w-6 h-6 text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+                        <div className="w-12 h-px bg-green-500/40" />
+                      </div>
+                      <h3 className="text-base md:text-xl font-black tracking-[0.4em] md:tracking-[0.6em] uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] mb-3">Module Locked</h3>
+                      <p className="text-[10px] md:text-xs text-green-500/80 tracking-widest uppercase font-bold">Authentication Requires Module Selection</p>
+                    </div>
+                    
+                    <div className="flex flex-col xl:flex-row gap-6 lg:gap-10 relative">
+                      {/* Software Engineering Module Button */}
+                      <button 
+                        onClick={() => setSelectedCV('SE')}
+                        className="group relative flex flex-col items-center p-8 bg-[#050a05]/95 border-2 border-green-500/30 w-44 sm:w-56 overflow-hidden transition-all duration-500 hover:border-green-400 shadow-[0_0_20px_rgba(34,197,94,0.1)] hover:shadow-[0_0_50px_rgba(34,197,94,0.3)] rounded-2xl"
+                      >
+                        <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-[0.05] transition-opacity duration-500" />
+                        {/* Shimmer effect */}
+                        <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-green-500/10 opacity-0 group-hover:opacity-100 group-hover:animate-[pulse_1s_infinite] transition-all" />
+
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6 group-hover:bg-green-500/20 group-hover:scale-110 transition-transform duration-500 border border-green-500/20 ring-4 ring-black">
+                          <Cpu className="w-8 h-8 md:w-10 md:h-10 text-green-500/80 group-hover:text-green-400 transition-colors drop-shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                        </div>
+                        <span className="font-display font-black text-2xl md:text-3xl text-white tracking-[0.2em] group-hover:text-green-300 transition-colors">SE_SYS</span>
+                        <div className="w-3/4 h-px bg-green-500/20 my-4" />
+                        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-green-500/60 font-bold group-hover:text-green-400/80">Software Engineering</span>
+                      </button>
+
+                      {/* Artificial Intelligence Module Button */}
+                      <button 
+                        onClick={() => setSelectedCV('AI')}
+                        className="group relative flex flex-col items-center p-8 bg-[#050a05]/95 border-2 border-blue-500/30 w-44 sm:w-56 overflow-hidden transition-all duration-500 hover:border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.1)] hover:shadow-[0_0_50px_rgba(59,130,246,0.3)] rounded-2xl"
+                      >
+                        <div className="absolute inset-0 bg-blue-500 opacity-0 group-hover:opacity-[0.05] transition-opacity duration-500" />
+                        {/* Shimmer effect */}
+                        <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 group-hover:animate-[pulse_1s_infinite] transition-all" />
+
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 group-hover:bg-blue-500/20 group-hover:scale-110 transition-transform duration-500 border border-blue-500/20 ring-4 ring-black">
+                          <BrainCircuit className="w-8 h-8 md:w-10 md:h-10 text-blue-500/80 group-hover:text-blue-400 transition-colors drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                        </div>
+                        <span className="font-display font-black text-2xl md:text-3xl text-white tracking-[0.2em] group-hover:text-blue-300 transition-colors">AI_SYS</span>
+                        <div className="w-3/4 h-px bg-blue-500/20 my-4" />
+                        <span className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-blue-500/60 font-bold group-hover:text-blue-400/80">Artificial Intelligence</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+            </div>
           </div>
         </div>
       </section>
